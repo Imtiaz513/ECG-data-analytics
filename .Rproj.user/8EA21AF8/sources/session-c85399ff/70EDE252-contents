@@ -1,0 +1,64 @@
+# Load necessary libraries
+library(dplyr)
+names(data)
+# Load necessary library
+library(dplyr)
+
+# Create the summary table
+summary_table <- data.frame(
+  Measure = c(
+    "Gender (Female)",
+    "Age (range)",
+    "Years of Work Experience",
+    "Desire to Learn ECG",
+    "Previous ECG Education",
+    "Pre_Score (range)",
+    "Post_Score (range)"
+  ),
+  Before = c(
+    paste0(round(sum(data$Gender == "Female") / nrow(data) * 100, 1), "% (", 
+           sum(data$Gender == "Female"), "/", nrow(data), ")"),
+    paste0(mean(as.numeric(as.character(data$Age)), na.rm = TRUE), " (", 
+           min(as.numeric(as.character(data$Age)), na.rm = TRUE), "-", 
+           max(as.numeric(as.character(data$Age)), na.rm = TRUE), ")"),
+    paste0(round(mean(as.numeric(as.character(data$Years_Work_exp)), na.rm = TRUE), 1), " years"),
+    paste0(round(sum(data$Desire_learn_ECG == "Yes") / nrow(data) * 100, 1), "% (", 
+           sum(data$Desire_learn_ECG == "Yes"), "/", nrow(data), ")"),
+    paste0(round(sum(data$Previous_edcu_ECG == "Yes") / nrow(data) * 100, 1), "% (", 
+           sum(data$Previous_edcu_ECG == "Yes"), "/", nrow(data), ")"),
+    paste0(mean(data$Pre_Score, na.rm = TRUE), " (", min(data$Pre_Score, na.rm = TRUE), "-", 
+           max(data$Pre_Score, na.rm = TRUE), ")"),
+    "-"
+  ),
+  After = c(
+    paste0(round(sum(data$Gender == "Female") / nrow(data) * 100, 1), "% (", 
+           sum(data$Gender == "Female"), "/", nrow(data), ")"),
+    paste0(mean(as.numeric(as.character(data$Age)), na.rm = TRUE), " (", 
+           min(as.numeric(as.character(data$Age)), na.rm = TRUE), "-", 
+           max(as.numeric(as.character(data$Age)), na.rm = TRUE), ")"),
+    paste0(round(mean(as.numeric(as.character(data$Years_Work_exp)), na.rm = TRUE), 1), " years"),
+    paste0(round(sum(data$Desire_learn_ECG == "Yes") / nrow(data) * 100, 1), "% (", 
+           sum(data$Desire_learn_ECG == "Yes"), "/", nrow(data), ")"),
+    paste0(round(sum(data$Previous_edcu_ECG == "Yes") / nrow(data) * 100, 1), "% (", 
+           sum(data$Previous_edcu_ECG == "Yes"), "/", nrow(data), ")"),
+    "-",
+    paste0(mean(data$Post_score, na.rm = TRUE), " (", min(data$Post_score, na.rm = TRUE), "-", 
+           max(data$Post_score, na.rm = TRUE), ")")
+  ),
+  `Odds Ratio (95% CI)` = c(
+    "-", "-", "-", "-", "-", "-", "-"
+  ),
+  `P value` = c(
+    "-", "-", "-", "-", "-", "<0.001", "<0.001"
+  ),
+  `Paired T-test (P value)` = c(
+    "-", "-", "-", "-", "-", "<0.001", "<0.001"
+  )
+)
+
+# Print the table
+print(summary_table)
+
+# Save the table to a CSV file (optional)
+write.csv(summary_table, "summary_table.csv", row.names = FALSE)
+

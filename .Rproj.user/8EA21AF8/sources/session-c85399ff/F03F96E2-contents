@@ -1,0 +1,292 @@
+# Create boxplots for each grouping variable
+grouping_vars <- c("Gender", "Age", "Years_Work_exp", "Hospital_Unit", "Years_Education")
+
+for (var in grouping_vars) {
+  # Dynamic ggplot code for each variable
+  p <- ggplot(long_data, aes_string(x = "Score_Type", y = "Score", fill = var)) +
+    geom_boxplot() +
+    stat_compare_means(aes_string(group = var), method = "t.test") + # Adds p-values
+    labs(
+      fill = var,
+      x = "Score Type",
+      y = "Score",
+      title = paste("Comparison of Pre-Score and Post-Score by", var)
+    ) +
+    theme_minimal()
+  
+  # Print each plot
+  print(p)
+}
+# Load required libraries
+library(ggplot2)
+library(tidyr)
+library(ggpubr)
+library(patchwork) # For combining plots
+
+# Reshape data for ggplot
+long_data <- data %>%
+  pivot_longer(cols = c("Pre_Score", "Post_score"), 
+               names_to = "Score_Type", values_to = "Score")
+
+# Define grouping variables
+grouping_vars <- c("Gender", "Age", "Years_Work_exp", "Hospital_Unit", "Years_Education")
+
+# Initialize an empty plot object
+combined_plot <- NULL
+
+# Loop through each grouping variable and create plots
+for (var in grouping_vars) {
+  p <- ggplot(long_data, aes_string(x = "Score_Type", y = "Score", fill = var)) +
+    geom_boxplot() +
+    stat_compare_means(aes_string(group = var), method = "t.test") + # Adds p-values
+    labs(
+      fill = var,
+      x = "Score Type",
+      y = "Score",
+      title = paste("Comparison by", var)
+    ) +
+    theme_minimal()
+  
+  # Add each plot to combined_plot
+  combined_plot <- if (is.null(combined_plot)) p else combined_plot + p
+}
+
+# Combine all plots into a grid
+combined_plot <- combined_plot + plot_layout(ncol = 2) # Arrange in 2 columns
+print(combined_plot)
+library(cowplot)
+
+# Create list of plots
+plot_list <- lapply(grouping_vars, function(var) {
+  ggplot(long_data, aes_string(x = "Score_Type", y = "Score", fill = var)) +
+    geom_boxplot() +
+    stat_compare_means(aes_string(group = var), method = "t.test") +
+    labs(
+      fill = var,
+      x = "Score Type",
+      y = "Score",
+      title = paste("Comparison by", var)
+    ) +
+    theme_minimal()
+})
+
+# Combine plots in a single frame
+combined_plot <- plot_grid(plotlist = plot_list, ncol = 2)
+print(combined_plot)
+# Load required libraries
+library(ggplot2)
+library(tidyr)
+library(ggpubr)
+library(patchwork) # For combining plots
+
+# Reshape data for ggplot
+long_data <- data %>%
+  pivot_longer(cols = c("Pre_Score", "Post_score"), 
+               names_to = "Score_Type", values_to = "Score")
+
+# Define grouping variables
+grouping_vars <- c("Gender", "Age", "Years_Work_exp", "Hospital_Unit", "Years_Education")
+
+# Initialize an empty plot object
+combined_plot <- NULL
+
+# Loop through each grouping variable and create plots
+for (var in grouping_vars) {
+  p <- ggplot(long_data, aes_string(x = "Score_Type", y = "Score", fill = var)) +
+    geom_boxplot() +
+    stat_compare_means(
+      aes_string(group = var), 
+      method = "t.test", 
+      label.y = max(long_data$Score) + 5 # Position p-values above the boxes
+    ) +
+    labs(
+      fill = var,
+      x = "Score Type",
+      y = "Score",
+      title = paste("Comparison by", var)
+    ) +
+    theme_minimal()
+  
+  # Add each plot to combined_plot
+  combined_plot <- if (is.null(combined_plot)) p else combined_plot + p
+}
+
+# Combine all plots into a grid
+combined_plot <- combined_plot + plot_layout(ncol = 2) # Arrange in 2 columns
+print(combined_plot)
+stat_compare_means(
+  aes_string(group = var),
+  method = "t.test",
+  label.y = 100 # Set a fixed y-coordinate
+)
+# Load required libraries
+library(ggplot2)
+library(tidyr)
+library(ggpubr)
+library(patchwork) # For combining plots
+
+# Reshape data for ggplot
+long_data <- data %>%
+  pivot_longer(cols = c("Pre_Score", "Post_score"), 
+               names_to = "Score_Type", values_to = "Score")
+
+# Define grouping variables
+grouping_vars <- c("Gender", "Age", "Years_Work_exp", "Hospital_Unit", "Years_Education")
+
+# Initialize an empty plot object
+combined_plot <- NULL
+
+# Loop through each grouping variable and create plots
+for (var in grouping_vars) {
+  p <- ggplot(long_data, aes_string(x = "Score_Type", y = "Score", fill = var)) +
+    geom_boxplot() +
+    stat_compare_means(
+      aes_string(group = var), 
+      method = "t.test", 
+      label.y = min(long_data$Score) - 10 # Position p-values below the boxplot
+    ) +
+    labs(
+      fill = var,
+      x = "Score Type",
+      y = "Score",
+      title = paste("Comparison by", var)
+    ) +
+    theme_minimal() +
+    theme(plot.margin = margin(20, 20, 40, 20)) # Add space below the plot
+  # Add each plot to combined_plot
+  combined_plot <- if (is.null(combined_plot)) p else combined_plot + p
+}
+
+# Combine all plots into a grid
+combined_plot <- combined_plot + plot_layout(ncol = 2) # Arrange in 2 columns
+print(combined_plot)
+# Load required libraries
+library(ggplot2)
+library(tidyr)
+library(ggpubr)
+library(patchwork)
+
+# Reshape data for ggplot
+long_data <- data %>%
+  pivot_longer(cols = c("Pre_Score", "Post_score"), 
+               names_to = "Score_Type", values_to = "Score")
+
+# Define grouping variables
+grouping_vars <- c("Gender", "Age", "Years_Work_exp", "Hospital_Unit", "Years_Education")
+
+# Initialize an empty plot object
+combined_plot <- NULL
+
+# Loop through each grouping variable and create plots
+for (var in grouping_vars) {
+  p <- ggplot(long_data, aes_string(x = "Score_Type", y = "Score", fill = var)) +
+    geom_boxplot() +
+    stat_compare_means(
+      aes_string(group = var), 
+      method = "wilcox.test", # Non-parametric Wilcoxon test
+      label.y.npc = "bottom", 
+      vjust = -1.5 # Position p-values below the graph
+    ) +
+    labs(
+      fill = var,
+      x = "Score Type",
+      y = "Score",
+      title = paste("Non-Parametric Comparison by", var)
+    ) +
+    theme_minimal() +
+    theme(plot.margin = unit(c(1, 1, 2, 1), "cm")) # Add extra bottom margin for space
+  combined_plot <- if (is.null(combined_plot)) p else combined_plot + p
+}
+
+# Combine all plots into a grid
+combined_plot <- combined_plot + plot_layout(ncol = 2) # Arrange in 2 columns
+print(combined_plot)
+# Load required libraries
+library(ggplot2)
+library(tidyr)
+library(ggpubr)
+
+# Reshape data for ggplot
+long_data <- data %>%
+  pivot_longer(cols = c("Pre_Score", "Post_score"), 
+               names_to = "Score_Type", values_to = "Score")
+
+# Define grouping variables
+grouping_vars <- c("Gender", "Age", "Years_Work_exp", "Hospital_Unit", "Years_Education")
+
+# Loop through each grouping variable and create separate plots
+for (var in grouping_vars) {
+  # Generate individual plot
+  p <- ggplot(long_data, aes_string(x = "Score_Type", y = "Score", fill = var)) +
+    geom_boxplot() +
+    stat_compare_means(
+      aes_string(group = var), 
+      method = "wilcox.test", # Non-parametric test
+      label.y.npc = "bottom", 
+      vjust = -1.5 # Position p-values below the graph
+    ) +
+    labs(
+      fill = var,
+      x = "Score Type",
+      y = "Score",
+      title = paste(" Comparison of Knowledge score  by", var)
+    ) +
+    theme_minimal() +
+    theme(plot.margin = unit(c(1, 1, 2, 1), "cm")) # Extra space for p-values
+  
+  # Print the plot for the current variable
+  print(p)
+}
+# Perform Wilcoxon Signed-Rank Test
+wilcox_result <- wilcox.test(data$Pre_Score, data$Post_score, paired = TRUE)
+
+# Print Test Result
+print(wilcox_result)
+# Reshape data for visualization
+library(tidyr)
+long_data <- data %>%
+  pivot_longer(cols = c("Pre_Score", "Post_score"), 
+               names_to = "Score_Type", values_to = "Score")
+
+# Boxplot for Pre and Post Scores
+library(ggplot2)
+ggplot(long_data, aes(x = Score_Type, y = Score, fill = Score_Type)) +
+  geom_boxplot() +
+  labs(
+    title = "Comparison of Knowledge: Pre-Score vs. Post-Score",
+    x = "Score Type",
+    y = "Score"
+  ) +
+  theme_minimal()
+# Example Data
+data <- data.frame(
+  Pre_Score = c(50, 60, 55, 65, 70, 58),
+  Post_score = c(55, 65, 58, 70, 75, 60)
+)
+
+# Perform Wilcoxon Signed-Rank Test
+wilcox_result <- wilcox.test(data$Pre_Score, data$Post_score, paired = TRUE)
+
+# Reshape data for visualization
+library(tidyr)
+library(ggplot2)
+library(ggpubr)
+
+long_data <- data %>%
+  pivot_longer(cols = c("Pre_Score", "Post_score"), 
+               names_to = "Score_Type", values_to = "Score")
+
+# Boxplot with P-value
+ggplot(long_data, aes(x = Score_Type, y = Score, fill = Score_Type)) +
+  geom_boxplot() +
+  stat_compare_means(
+    method = "wilcox.test", 
+    paired = TRUE, 
+    label = "p.format" # Display p-value
+  ) +
+  labs(
+    title = "Comparison of Knowledge: Pre-Score vs. Post-Score",
+    x = "Score Type",
+    y = "Score"
+  ) +
+  theme_minimal()

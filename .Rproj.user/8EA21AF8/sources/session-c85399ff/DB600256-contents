@@ -1,0 +1,167 @@
+library(tidyr)
+library(ggplot2)
+
+# Reshape data from wide to long format
+data_long <- data %>%
+  pivot_longer(
+    cols = c(Pre_Score, Post_score),
+    names_to = "Timepoint",
+    values_to = "Score"
+  )
+ggplot(data_long, aes(x = Designation_A, y = Score, fill = Timepoint)) +
+  geom_bar(stat = "summary", fun = "mean", position = "dodge") +
+  labs(
+    title = "Average Pre and Post Scores by Designation",
+    x = "Designation",
+    y = "Average Score",
+    fill = "Timepoint"
+  ) +
+  theme_minimal()
+ggplot(data_long, aes(x = Designation_A, y = Score, fill = Timepoint)) +
+  geom_boxplot() +
+  labs(
+    title = "Distribution of Pre and Post Scores by Designation",
+    x = "Designation",
+    y = "Score",
+    fill = "Timepoint"
+  ) +
+  facet_wrap(~ Timepoint) +
+  theme_minimal()
+ggplot(data_long, aes(x = Timepoint, y = Score, group = Designation_A, color = Designation_A)) +
+  geom_line(stat = "summary", fun = "mean", size = 1) + 
+  geom_point(stat = "summary", fun = "mean", size = 3) +
+  labs(
+    title = "Change in Scores from Pre to Post by Designation",
+    x = "Timepoint",
+    y = "Score",
+    color = "Designation"
+  ) +
+  theme_minimal()
+library(dplyr)
+library(ggpubr)
+
+# Perform paired t-test for each designation
+p_values <- data %>%
+  group_by(Designation_A) %>%
+  summarise(
+    p_value = t.test(Pre_Score, Post_score, paired = TRUE)$p.value
+  )
+
+print(p_values)  # Check the p-values
+# Bar plot with mean values and p-value annotations
+ggplot(data_long, aes(x = Designation_A, y = Score, fill = Timepoint)) +
+  geom_bar(stat = "summary", fun = "mean", position = "dodge") +
+  labs(
+    title = "Average Pre and Post Scores by Designation",
+    x = "Designation",
+    y = "Average Score",
+    fill = "Timepoint"
+  ) +
+  theme_minimal() +
+  stat_compare_means(
+    aes(group = Timepoint),
+    method = "t.test", 
+    paired = TRUE,
+    label = "p.signif",
+    comparisons = list(c("Pre_Score", "Post_score"))
+  )
+# Faceted boxplot with p-value annotations
+ggplot(data_long, aes(x = Designation_A, y = Score, fill = Timepoint)) +
+  geom_boxplot() +
+  labs(
+    title = "Distribution of Pre and Post Scores by Designation",
+    x = "Designation",
+    y = "Score",
+    fill = "Timepoint"
+  ) +
+  facet_wrap(~ Timepoint) +
+  stat_compare_means(
+    aes(group = Designation_A),
+    method = "t.test",
+    paired = TRUE,
+    label = "p.signif"
+  ) +
+  theme_minimal()
+# Paired line plot with p-values
+ggplot(data_long, aes(x = Timepoint, y = Score, group = Designation_A, color = Designation_A)) +
+  geom_line(stat = "summary", fun = "mean", size = 1) + 
+  geom_point(stat = "summary", fun = "mean", size = 3) +
+  labs(
+    title = "Change in Scores from Pre to Post by Designation",
+    x = "Timepoint",
+    y = "Score",
+    color = "Designation"
+  ) +
+  theme_minimal() +
+  stat_compare_means(
+    aes(group = Designation_A),
+    method = "t.test",
+    paired = TRUE,
+    label = "p.signif"
+  )
+library(ggpubr)
+
+# Add Wilcoxon test to a grouped bar plot
+ggplot(data_long, aes(x = Designation_A, y = Score, fill = Timepoint)) +
+  geom_bar(stat = "summary", fun = "mean", position = "dodge") +
+  labs(
+    title = "Average Pre and Post Scores by Designation",
+    x = "Designation",
+    y = "Average Score",
+    fill = "Timepoint"
+  ) +
+  theme_minimal() +
+  stat_compare_means(
+    aes(group = Timepoint),
+    method = "wilcox.test", 
+    paired = TRUE,
+    label = "p.signif",
+    comparisons = list(c("Pre_Score", "Post_score"))
+  )
+# Check for missing values
+any(is.na(data$Pre_Score))
+any(is.na(data$Post_score))
+any(is.na(data$Designation_A))
+# Remove rows with missing values
+data <- na.omit(data)
+unique(data_long$Timepoint)  # Check levels of Timepoint
+data_long$Timepoint <- factor(data_long$Timepoint, levels = c("Pre_Score", "Post_score"))
+comparisons <- list(c("Pre_Score", "Post_score"))
+ggplot(data_long, aes(x = Timepoint, y = Score, fill = Timepoint)) +
+  geom_boxplot() +
+  stat_compare_means(method = "wilcox.test", paired = TRUE) +
+  labs(
+    title = "Pre vs Post Scores",
+    x = "Timepoint",
+    y = "Score",
+    fill = "Timepoint"
+  ) +
+  theme_minimal()
+ggplot(data_long, aes(x = Timepoint, y = Score, group = Designation_A, fill = Timepoint)) +
+  geom_boxplot() +
+  stat_compare_means(
+    aes(group = Designation_A),
+    method = "wilcox.test",
+    paired = TRUE,
+    label = "p.signif"
+  ) +
+  labs(
+    title = "Pre vs Post Scores by Designation",
+    x = "Timepoint",
+    y = "Score",
+    fill = "Timepoint"
+  ) +
+  theme_minimal()
+library(ggpubr)
+
+ggplot(data_long, aes(x = Timepoint, y = Score, fill = Timepoint)) +
+  geom_boxplot() +
+  stat_compare_means(method = "wilcox.test", paired = TRUE) +
+  labs(
+    title = "Pre vs Post Scores Comparison",
+    x = "Timepoint",
+    y = "Score",
+    fill = "Timepoint"
+  ) +
+  theme_minimal()
+str(data)
